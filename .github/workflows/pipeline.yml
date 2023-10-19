@@ -17,12 +17,12 @@ jobs:
 
 # ------- START API PROCCESS -------- #
 
-  CI_WebApi:
+  WebAPI:
 
     runs-on: ubuntu-latest
 
     env:
-      PROJECT_NAME: CIAT.DAPA.USAID.Forecast.WebApi
+      PROJECT_NAME: CIAT.DAPA.USAID.Forecast.WebAPI
 
     steps:
     - uses: actions/checkout@v3
@@ -33,14 +33,14 @@ jobs:
       with:
         dotnet-version: 2.2.X
 
-    - name: Create Output Directory WebApi
-      run: mkdir -p ./publish/WebApi
-    - name: Create Output test Directory WebApi
-      run: mkdir -p ./TestResults/WebApi
+    - name: Create Output Directory WebAPI
+      run: mkdir -p ./publish/WebAPI
+    - name: Create Output test Directory WebAPI
+      run: mkdir -p ./TestResults/WebAPI
     - name: Remove Previous Publish Folder
-      run: rm -rf ./publish/WebApi/*
+      run: rm -rf ./publish/WebAPI/*
     - name: Remove Previous TestResults Folder
-      run: rm -rf ./TestResults/WebApi/*
+      run: rm -rf ./TestResults/WebAPI/*
 
     - name: Copy dependencies from other repo
       run: |
@@ -50,11 +50,11 @@ jobs:
     - name: Restore NuGet Packages
       run: dotnet restore $PROJECT_NAME.csproj
 
-    - name: Build WebApi
+    - name: Build WebAPI
       run: dotnet build $PROJECT_NAME.csproj --configuration Release
 
-    - name: Test WebApi
-      run: dotnet test $PROJECT_NAME.csproj --configuration Release --logger trx --results-directory TestResults/WebApi
+    - name: Test WebAPI
+      run: dotnet test $PROJECT_NAME.csproj --configuration Release --logger trx --results-directory TestResults/WebAPI
 
 
 
@@ -64,7 +64,7 @@ jobs:
 # ------- START MERGE PROCCESS -------- #
 
   MergeMasterApi:
-    needs: CI_WebApi
+    needs: CI_WebAPI
     name: Merge Pre deploy with Main
     permissions: write-all
     runs-on: ubuntu-latest
@@ -88,7 +88,7 @@ jobs:
     name: Create Release
     runs-on: ubuntu-latest
     env:
-      PROJECT_NAME: CIAT.DAPA.USAID.Forecast.WebApi
+      PROJECT_NAME: CIAT.DAPA.USAID.Forecast.WebAPI
     permissions: write-all
     steps:
     - uses: actions/checkout@v3
@@ -102,27 +102,27 @@ jobs:
       with:
         dotnet-version: 2.2.X
 
-    #Publish WebApi
+    #Publish WebAPI
     - name: Copy dependencies from other repo
       run: |
         folder_before="$GITHUB_WORKSPACE/.."
         git clone ${{ vars.DATA_URL }} $folder_before/CIAT.DAPA.USAID.Forecast.Data
     - name: Restore NuGet Packages
       run: dotnet restore $PROJECT_NAME.csproj
-    - name: Publish WebApi
-      run: dotnet publish $PROJECT_NAME.csproj --configuration Release -o ./publish/WebApi --no-restore
+    - name: Publish WebAPI
+      run: dotnet publish $PROJECT_NAME.csproj --configuration Release -o ./publish/WebAPI --no-restore
 
     # API Zip
     - name: Zip artifact for deployment
-      run: zip releaseWebApi.zip ./publish/WebApi/ -r
+      run: zip releaseWebAPI.zip ./publish/WebAPI/ -r
 
 
     # Upload Artifacts
-    - name: Upload WebApi artifact for deployment job
+    - name: Upload WebAPI artifact for deployment job
       uses: actions/upload-artifact@v3
       with:
-        name: WebApi
-        path: releaseWebApi.zip
+        name: WebAPI
+        path: releaseWebAPI.zip
 
     # Generate Tagname
     - name: Generate Tagname for release
@@ -151,15 +151,15 @@ jobs:
         prerelease: false
 
     # Upload Assets to release
-    - name: Upload Release Asset WebApi
+    - name: Upload Release Asset WebAPI
       id: upload-webapi-release-asset 
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ./releaseWebApi.zip
-        asset_name: releaseWebApi.zip
+        asset_path: ./releaseWebAPI.zip
+        asset_name: releaseWebAPI.zip
         asset_content_type: application/zip
 
 # ------- END RELEASE PROCCESS -------- #
