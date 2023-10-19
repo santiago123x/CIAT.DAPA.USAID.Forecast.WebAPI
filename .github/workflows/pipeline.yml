@@ -17,7 +17,7 @@ jobs:
 
 # ------- START API PROCCESS -------- #
 
-  WebAPI:
+  CI_WebAPI:
 
     runs-on: ubuntu-latest
 
